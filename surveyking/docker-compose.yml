@@ -1,0 +1,56 @@
+services:
+  surveyking:
+    image: openjdk:8u342-jdk
+    container_name: surveyking
+    restart: unless-stopped
+    environment:
+      JAVA_OPTS: "-Xms128m -Xmx1024m"
+    ports:
+      - 1991:1991
+    environment:
+      JAVA_OPTS: "-Xms128m -Xmx1024m"
+    ports:
+      - 1991:1991
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./surveyking/surveyking-v1.7.2.jar:/surveyking.jar
+      - ./surveyking/logs:/logs
+      - ./surveyking/files:/files
+    networks:
+      - surveyking
+    command: [
+      "sh",
+      "-c",
+      "java -jar /surveyking.jar --spring.datasource.url=jdbc:mysql://mysql/surveyking --spring.datasource.username=surveyking --spring.datasource.password=surveyking"]
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:5.7.42
+    container_name: surveyking_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "K14m4Z7EUQxd0uO"
+      MYSQL_DATABASE: "surveyking"
+      MYSQL_USER: surveyking
+      MYSQL_PASSWORD: surveyking
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin --user=root --password=K14m4Z7EUQxd0uO ping -h localhost"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./mysql/init-mysql.sql:/docker-entrypoint-initdb.d/init-mysql.sql
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/conf:/etc/mysql/conf.d
+    networks:
+      - surveyking
+#    command:
+#      - "--character-set-server=utf8mb4"
+#      - "--collation-server=utf8mb4_unicode_ci"
+
+networks:
+  surveyking:
+    driver: bridge
