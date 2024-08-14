@@ -1,0 +1,17 @@
+services:
+  biliup:
+    image: ghcr.io/biliup/caution:v0.4.48
+    container_name: biliup
+    volumes:
+      - ./:/opt
+    ports:
+      - 19159:19159
+    restart: unless-stopped
+    command: --password lmx050218
+    networks:
+      - biliup
+
+networks:
+  biliup:
+    driver: bridge
+~                               
