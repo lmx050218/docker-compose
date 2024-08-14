@@ -1,0 +1,58 @@
+services:
+  npm:
+    image: 'jc21/nginx-proxy-manager:2.11.3'
+    container_name: npm
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      - '81:81'
+    environment:
+      DB_MYSQL_HOST: "npm_db"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm"
+      DB_MYSQL_PASSWORD: "npm"
+      DB_MYSQL_NAME: "npm"
+version: '3.8'
+services:
+  npm:
+    image: 'jc21/nginx-proxy-manager:2.11.3'
+    container_name: npm
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      - '81:81'
+    environment:
+      DB_MYSQL_HOST: "npm_db"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm"
+      DB_MYSQL_PASSWORD: "npm"
+      DB_MYSQL_NAME: "npm"
+      DISABLE_IPV6: 'true' # without v6
+    networks:
+      - npm
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    depends_on:
+      - npm_db
+
+  npm_db:
+    image: 'jc21/mariadb-aria:10.11.5-innodb'
+    container_name: npm_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 'bmdpbnhwcm94eW1'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
+      MYSQL_PASSWORD: 'npm'
+      MARIADB_AUTO_UPGRADE: '1'
+    networks:
+      - npm
+    volumes:
+      - ./mysql:/var/lib/mysql
+
+networks:
+  npm:
+    driver: bridge
