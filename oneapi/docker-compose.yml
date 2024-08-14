@@ -1,0 +1,60 @@
+services:
+  oneapi:
+    image: 'ghcr.io/songquanpeng/one-api:v0.6.6'
+    environment:
+      - TZ=Asia/Shanghai
+      - SQL_DSN=root:Hv260i6ep218e7Y@tcp(mysql:3306)/oneapi
+    volumes:
+      - './oneapi/data:/data'
+    ports:
+      - '3000:3000'
+    restart: on-failure:3
+    container_name: oneapi
+    networks:
+      - 'oneapi'
+    command: ["./wait-for-it.sh", "mysql:3306", "--", "npm", "start"]
+    depends_on:
+services:
+  oneapi:
+    image: 'ghcr.io/songquanpeng/one-api:v0.6.6'
+    environment:
+      - TZ=Asia/Shanghai
+      - SQL_DSN=root:Hv260i6ep218e7Y@tcp(mysql:3306)/oneapi
+    volumes:
+      - './oneapi/data:/data'
+    ports:
+      - '3000:3000'
+    restart: on-failure:3
+    container_name: oneapi
+    networks:
+      - 'oneapi'
+    command: ["./wait-for-it.sh", "mysql:3306", "--", "npm", "start"]
+    depends_on:
+    networks:
+      - npm
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    depends_on:
+      - npm_db
+      
+  npm_db:
+    image: 'jc21/mariadb-aria:10.11.5-innodb'
+    container_name: npm_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 'bmdpbnhwcm94eW1'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
+      MYSQL_PASSWORD: 'npm'
+      MARIADB_AUTO_UPGRADE: '1'
+    networks:
+      - npm
+    volumes:
+      - ./mysql:/var/lib/mysql
+      
+networks:
+  npm:
+    driver: bridge
+   driver: bridge
+-- 插入 --              
